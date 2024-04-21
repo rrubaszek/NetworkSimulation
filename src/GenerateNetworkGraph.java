@@ -5,6 +5,7 @@ import org.jgrapht.graph.DirectedWeightedMultigraph;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class GenerateNetworkGraph {
     public final static int size = 20;
@@ -20,11 +21,15 @@ public class GenerateNetworkGraph {
         return capacityMatrix;
     }
 
-    public Graph<String, DefaultWeightedEdge> generate(int capacityStartingValue, int capacityDelta, int concentrationStartingValue, int concentrationDelta) {
+    public void setConcentrationMatrix(int[][] concentrationMatrix) {
 
-        capacityMatrix = createMatrix(capacityStartingValue, capacityDelta);
+    }
 
-        concentrationMatrix = createMatrix(concentrationStartingValue, concentrationDelta);
+    public void setCapacityMatrix(int[][] capacityMatrix) {
+
+    }
+
+    public Graph<String, DefaultWeightedEdge> generate(int startValue, int endValue, int delta) {
 
         Graph<String, DefaultWeightedEdge> directedGraph = new DirectedWeightedMultigraph<>(DefaultWeightedEdge.class);
 
@@ -33,6 +38,10 @@ public class GenerateNetworkGraph {
         }
 
         List<Point> vertexes = createVertexes();
+
+        List<int[][]> res = createMatrix(vertexes, startValue, endValue, delta);
+        capacityMatrix = res.get(0);
+        concentrationMatrix = res.get(1);
 
         int value;
         for(Point v : vertexes) {
@@ -45,16 +54,28 @@ public class GenerateNetworkGraph {
         return directedGraph;
     }
 
-    private int[][] createMatrix(int startingValue, int delta) {
-        int[][] matrix = new int[size][size];
+    private List<int[][]> createMatrix(List<Point> vertexes, int startValue, int endValue, int delta) {
+        int[][] capacityMatrix = new int[size][size];
+        int[][] concentrationMatrix = new int[size][size];
+        Random random = new Random();
 
-        for(int i = 0; i < size; i++) {
-            for(int j = 0; j < size; j++) {
-                matrix[i][j] = startingValue;
-                startingValue += delta;
-            }
+        int i, j, value, diff;
+        for (Point v : vertexes) {
+
+            value = random.nextInt(endValue + startValue) + startValue;
+            diff = random.nextInt(delta) + 1;
+
+            capacityMatrix[v.x][v.y] = value + diff;
+            capacityMatrix[v.y][v.x] = value + diff;
+
+            concentrationMatrix[v.x][v.y] = value;
+            concentrationMatrix[v.y][v.x] = value;
         }
-        return matrix;
+
+        List<int[][]> res = new ArrayList<>();
+        res.add(capacityMatrix);
+        res.add(concentrationMatrix);
+        return res;
     }
 
     private List<Point> createVertexes() {

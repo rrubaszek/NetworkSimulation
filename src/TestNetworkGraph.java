@@ -2,30 +2,44 @@ import com.mxgraph.layout.mxFastOrganicLayout;
 import com.mxgraph.layout.mxIGraphLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import org.jgrapht.Graph;
+import org.jgrapht.alg.connectivity.ConnectivityInspector;
 import org.jgrapht.ext.JGraphXAdapter;
 import org.jgrapht.graph.DefaultWeightedEdge;
 
 import javax.swing.*;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 public class TestNetworkGraph {
-    private final GenerateNetworkGraph generator;
+    private GenerateNetworkGraph generator;
     private Graph<String, DefaultWeightedEdge> graph;
-    private static final double p = 0.95; //prawdopodobienstwo nieuszkodzenia krawedzi
-    public TestNetworkGraph() {
+    private static final double p = 0.98; //prawdopodobienstwo nieuszkodzenia krawedzi
+    public TestNetworkGraph() {}
+
+    public void test(int startValue, int endValue, int delta) {
+
         generator = new GenerateNetworkGraph();
-    }
+        graph = generator.generate(startValue, endValue, delta);
 
-    public void test(int capacityStartingValue, int capacityDelta, int concentrationStartingValue, int concentrationDelta) {
+        Random rand = new Random();
+        Set<DefaultWeightedEdge> edges = new HashSet<>(graph.edgeSet());
 
-        graph = generator.generate(capacityStartingValue, capacityDelta, concentrationStartingValue, concentrationDelta);
+        String source, target;
+        for (DefaultWeightedEdge edge : edges) {
+            if (rand.nextDouble() > p) {
+                source = graph.getEdgeSource(edge);
+                target = graph.getEdgeTarget(edge);
+                graph.removeEdge(source, target);
+                graph.removeEdge(target, source);
+            }
+        }
 
-//        Random rand = new Random();
-//        for(DefaultWeightedEdge edge : graph.edgeSet()) {
-//            if(rand.nextDouble() > p) {
-//                graph.removeEdge(edge);
-//            }
-//        }
+        if(isConnected(graph)) {
+            System.out.println("Connected");
+        } else {
+            System.out.println("Not connected");
+        }
 
         System.out.println(calcT());
         showGraph();
@@ -35,12 +49,13 @@ public class TestNetworkGraph {
         int[][] concentration = generator.getConcentrationMatrix();
         int[][] capacity = generator.getCapacityMatrix();
 
-        int sum = 0, source, target;
+        float sum = 0;
+        int source, target;
         for(DefaultWeightedEdge edge : graph.edgeSet()) {
             source = Integer.parseInt(graph.getEdgeSource(edge));
             target = Integer.parseInt(graph.getEdgeTarget(edge));
 
-            sum += concentration[source][target] / (capacity[source][target] - concentration[source][target]);
+            sum += (concentration[source][target] / (capacity[source][target]/12.0f - concentration[source][target]));
         }
 
         int G = 0;
@@ -50,7 +65,12 @@ public class TestNetworkGraph {
             }
         }
 
-        return 1.0/G + sum;
+        return 1.0/G * sum;
+    }
+
+    private boolean isConnected(Graph<String, DefaultWeightedEdge> graph) {
+        ConnectivityInspector<String, DefaultWeightedEdge> inspector = new ConnectivityInspector<>(graph);
+        return inspector.isConnected();
     }
 
     private void showGraph() {

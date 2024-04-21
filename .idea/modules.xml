@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/NetworkSimulation.iml" filepath="$PROJECT_DIR$/NetworkSimulation.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NetworkSim.iml" filepath="$PROJECT_DIR$/NetworkSim.iml" />
     </modules>
   </component>
 </project>
