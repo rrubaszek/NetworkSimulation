@@ -20,12 +20,12 @@ public class TestNetworkGraph {
 
         graph = generator.generate(capacityStartingValue, capacityDelta, concentrationStartingValue, concentrationDelta);
 
-        Random rand = new Random();
-        for(DefaultWeightedEdge edge : graph.edgeSet()) {
-            if(rand.nextDouble() > p) {
-                graph.removeEdge(edge);
-            }
-        }
+//        Random rand = new Random();
+//        for(DefaultWeightedEdge edge : graph.edgeSet()) {
+//            if(rand.nextDouble() > p) {
+//                graph.removeEdge(edge);
+//            }
+//        }
 
         System.out.println(calcT());
         showGraph();
