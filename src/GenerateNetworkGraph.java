@@ -57,11 +57,11 @@ public class GenerateNetworkGraph {
             value = random.nextInt(endValue - startValue + 1) + startValue;
             //diff = random.nextInt(delta) + delta;
 
-            capacityMatrix[v.x][v.y] = value + delta + 10;
-            capacityMatrix[v.y][v.x] = value + delta + 10;
+            capacityMatrix[v.x][v.y] = 100;
+            capacityMatrix[v.y][v.x] = 100;
 
-            concentrationMatrix[v.x][v.y] = value;
-            concentrationMatrix[v.y][v.x] = value;
+            concentrationMatrix[v.x][v.y] = 5;
+            concentrationMatrix[v.y][v.x] = 5;
         }
 
         List<int[][]> res = new ArrayList<>();
@@ -80,6 +80,11 @@ public class GenerateNetworkGraph {
         vertexes.add(new Point(4, 5));
 
         vertexes.add(new Point(1, 5));
+
+        //added in experiment
+        vertexes.add(new Point(5, 3));
+        vertexes.add(new Point(12, 17));
+        vertexes.add(new Point(14, 19));
 
         vertexes.add(new Point(5, 7));
         vertexes.add(new Point(7, 6));

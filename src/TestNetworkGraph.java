@@ -15,7 +15,7 @@ public class TestNetworkGraph {
     private GenerateNetworkGraph generator;
     private Graph<String, DefaultWeightedEdge> graph;
     private static final double p = 0.98; //probability of preserving the edge
-    private static final double t = 0.4;
+    private static final double t = 0.02;
     public TestNetworkGraph() {}
 
     public int test(int startValue, int endValue, int delta) {
@@ -23,6 +23,7 @@ public class TestNetworkGraph {
         generator = new GenerateNetworkGraph();
         graph = generator.generate(startValue, endValue, delta);
 
+        //showGraph();
         removeEdges();
 
         double T = calcT();
@@ -33,9 +34,6 @@ public class TestNetworkGraph {
         } else {
             return 0;
         }
-
-        //
-        ///showGraph();
     }
 
     private void removeEdges() {
