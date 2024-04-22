@@ -21,14 +21,6 @@ public class GenerateNetworkGraph {
         return capacityMatrix;
     }
 
-    public void setConcentrationMatrix(int[][] concentrationMatrix) {
-
-    }
-
-    public void setCapacityMatrix(int[][] capacityMatrix) {
-
-    }
-
     public Graph<String, DefaultWeightedEdge> generate(int startValue, int endValue, int delta) {
 
         Graph<String, DefaultWeightedEdge> directedGraph = new DirectedWeightedMultigraph<>(DefaultWeightedEdge.class);
@@ -39,7 +31,7 @@ public class GenerateNetworkGraph {
 
         List<Point> vertexes = createVertexes();
 
-        List<int[][]> res = createMatrix(vertexes, startValue, endValue, delta);
+        List<int[][]> res = createRandomMatrix(vertexes, startValue, endValue, delta);
         capacityMatrix = res.get(0);
         concentrationMatrix = res.get(1);
 
@@ -54,19 +46,19 @@ public class GenerateNetworkGraph {
         return directedGraph;
     }
 
-    private List<int[][]> createMatrix(List<Point> vertexes, int startValue, int endValue, int delta) {
+    private List<int[][]> createRandomMatrix(List<Point> vertexes, int startValue, int endValue, int delta) {
         int[][] capacityMatrix = new int[size][size];
         int[][] concentrationMatrix = new int[size][size];
         Random random = new Random();
 
-        int i, j, value, diff;
+        int value, diff;
         for (Point v : vertexes) {
 
-            value = random.nextInt(endValue + startValue) + startValue;
-            diff = random.nextInt(delta) + 1;
+            value = random.nextInt(endValue - startValue + 1) + startValue;
+            //diff = random.nextInt(delta) + delta;
 
-            capacityMatrix[v.x][v.y] = value + diff;
-            capacityMatrix[v.y][v.x] = value + diff;
+            capacityMatrix[v.x][v.y] = value + delta + 10;
+            capacityMatrix[v.y][v.x] = value + delta + 10;
 
             concentrationMatrix[v.x][v.y] = value;
             concentrationMatrix[v.y][v.x] = value;
@@ -93,6 +85,7 @@ public class GenerateNetworkGraph {
         vertexes.add(new Point(7, 6));
 
         vertexes.add(new Point(6, 8));
+        vertexes.add(new Point(8, 3));
 
         vertexes.add(new Point(4, 9));
         vertexes.add(new Point(3, 9));
@@ -112,6 +105,7 @@ public class GenerateNetworkGraph {
         vertexes.add(new Point(17, 19));
         vertexes.add(new Point(16, 18));
         vertexes.add(new Point(19, 10));
+        vertexes.add(new Point(19, 15));
 
         return vertexes;
     }

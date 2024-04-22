@@ -14,17 +14,33 @@ import java.util.Set;
 public class TestNetworkGraph {
     private GenerateNetworkGraph generator;
     private Graph<String, DefaultWeightedEdge> graph;
-    private static final double p = 0.98; //prawdopodobienstwo nieuszkodzenia krawedzi
+    private static final double p = 0.98; //probability of preserving the edge
+    private static final double t = 0.4;
     public TestNetworkGraph() {}
 
-    public void test(int startValue, int endValue, int delta) {
+    public int test(int startValue, int endValue, int delta) {
 
         generator = new GenerateNetworkGraph();
         graph = generator.generate(startValue, endValue, delta);
 
+        removeEdges();
+
+        double T = calcT();
+
+        if(isConnected(graph) && T < t) {
+            System.out.println("T= " + T);
+            return 1;
+        } else {
+            return 0;
+        }
+
+        //
+        ///showGraph();
+    }
+
+    private void removeEdges() {
         Random rand = new Random();
         Set<DefaultWeightedEdge> edges = new HashSet<>(graph.edgeSet());
-
         String source, target;
         for (DefaultWeightedEdge edge : edges) {
             if (rand.nextDouble() > p) {
@@ -34,28 +50,20 @@ public class TestNetworkGraph {
                 graph.removeEdge(target, source);
             }
         }
-
-        if(isConnected(graph)) {
-            System.out.println("Connected");
-        } else {
-            System.out.println("Not connected");
-        }
-
-        System.out.println(calcT());
-        showGraph();
     }
 
     private double calcT() {
         int[][] concentration = generator.getConcentrationMatrix();
         int[][] capacity = generator.getCapacityMatrix();
 
-        float sum = 0;
+        double sum = 0;
         int source, target;
         for(DefaultWeightedEdge edge : graph.edgeSet()) {
             source = Integer.parseInt(graph.getEdgeSource(edge));
             target = Integer.parseInt(graph.getEdgeTarget(edge));
 
-            sum += (concentration[source][target] / (capacity[source][target]/12.0f - concentration[source][target]));
+            //TODO: fix equation
+            sum += ((double) concentration[source][target] / (capacity[source][target] - concentration[source][target]));
         }
 
         int G = 0;
@@ -95,7 +103,6 @@ public class TestNetworkGraph {
     }
 
     private void printGraph() {
-        System.out.println("Krawędzie wraz z wagami:");
         for (DefaultWeightedEdge edge : graph.edgeSet()) {
             String source = graph.getEdgeSource(edge);
             String target = graph.getEdgeTarget(edge);
